@@ -31,7 +31,7 @@ namespace FormApp
                 connectToDatabase.Close(); //zavře databázi
             }
         }
-        //----------------------------------------------------------------ŘAZENÍ ZOBRAZENÝCH DAT
+        //----------------------------------------------------------------ŘAZENÍ ZOBRAZENÝCH DAT----------------------------------------------------------------//
         private void fillComboBoxes()
         {
 
