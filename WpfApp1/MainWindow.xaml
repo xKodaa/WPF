@@ -4,35 +4,56 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FormApp"
-        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" x:Class="FormApp.MainWindow"
-        mc:Ignorable="d"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" x:Class="FormApp.MainWindow" mc:Ignorable="d"
         Title="Formulář" Height="450" Width="800" 
-        Icon="C:\\Users\\UCZGEN-IT\\source\\repos\\WpfApp1\\WpfApp1\\ikona.jpg"
-        >
-    <Grid x:Name="myGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
+        Icon="C:\\Users\\UCZGEN-IT\\source\\repos\\WpfApp1\\WpfApp1\\ikona.jpg">
+
+    <Grid x:Name="myGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+          Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=ActualHeight}" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="434"/>
         </Grid.RowDefinitions>
-        <DataGrid ItemsSource="{Binding}" Name="dataGrid" 
-                  VerticalAlignment="Top" Grid.Row="1" BorderBrush="White" Background="White"
-                  />
-        <Grid x:Name="menuGrid" Height="50" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+
+        <Border BorderBrush="Black" BorderThickness="0,0,0,0" Background="#FFEDEAD4" Margin="0,0,0,381"/>
+
+        <Grid x:Name="menuGrid"  Height="159" VerticalAlignment="Top" RenderTransformOrigin="0.502,0.529">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.1*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.7*"/>
+                <ColumnDefinition Width="0.5*"/>
             </Grid.ColumnDefinitions>
-            <Label Name="labelID" Content="ID" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Margin="15,0,0,0" Grid.Column="1"/>
-            <Label Name="labelNazev" Content="Název" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="14" Width="48"/>
-            <ComboBox Name="comboBox" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" SelectedIndex="0" RenderTransformOrigin="0.758,0.502" Margin="40,0,0,0" Background="White" Height="30" FontSize="16"/>
-            <Button Name="buttonSerad" Grid.Column="4" Content="Sort" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click" FontSize="16" Background="White" Width="76" Height="30"/>
-            <TextBox Name="textBoxID" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Width="115" Background="White" Height="30" TextAlignment="Justify" BorderThickness="0,1,0,1" FontSize="16" Margin="42,0,0,0" Grid.Column="1"/>
-            <TextBox Name="textBoxNazev" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Width="115" Background="White" Height="30" BorderThickness="0,1,0,1" FontSize="16" Margin="50,0,0,0" Grid.ColumnSpan="2" TextChanged="searchText"/>
-            <ComboBox x:Name="comboBoxSorting" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120" SelectedIndex="0" RenderTransformOrigin="0.758,0.502" Margin="40,0,0,0" Background="White" Height="30" FontSize="16"/>
+
+            <Label x:Name="labelName" Content="Name" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="14" Width="55" Margin="15,12,0,0" Height="28" RenderTransformOrigin="0.538,0.359"/>
+            <Label x:Name="labelSurname" Content="Surname" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Margin="15,12,0,0" Grid.Column="1" RenderTransformOrigin="-0.231,-1.033" Height="28" Width="75"/>
+            <Label x:Name="labelAge" Content="Age" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="14" Width="35" Margin="30,12,0,0" Height="28" Grid.Column="2" RenderTransformOrigin="0.545,-0.838"/>
+            <TextBox x:Name="textBoxName" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Background="White" Height="30" BorderThickness="0,1,0,1" FontSize="16" Margin="76,12,0,0" Padding="2" TextChanged="searchText"/>
+            <TextBox x:Name="textBoxSurname" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Background="White" Height="30" TextAlignment="Justify" BorderThickness="0,1,0,1" Padding="2" FontSize="16" Margin="95,12,0,0" Grid.Column="1" RenderTransformOrigin="0.501,-1.15" TextChanged="searchText"/>
+            <TextBox x:Name="textBoxAge" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Background="White" Height="30" TextAlignment="Justify" BorderThickness="0,1,0,1" FontSize="16" Padding="2" Grid.Column="2" RenderTransformOrigin="0.501,-1.15" Margin="74,12,0,0" TextChanged="searchText"/>
+            <Button x:Name="buttonOption" Grid.Column="4" Content="Search" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16" Background="White" Width="76" Height="30" Margin="0,12,0,0" Click="buttonClick"/>
+            <ComboBox x:Name="optionComboBox" HorizontalAlignment="Center" Margin="0,12,0,0" VerticalAlignment="Top" Width="100" Height="30" Background="White" Grid.Column="3" Padding="5" FontSize="16px" SelectionChanged="changeTextOfButton" BorderBrush="White"/>
         </Grid>
+
+        <DataGrid ItemsSource="{Binding}" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" 
+                  Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=ActualHeight}"
+                  Name="dataGrid" Margin="0,53,0,-175" BorderThickness="0,0,0,0" RenderTransformOrigin="0.501,2.549" FontSize="14" FontWeight="Normal" ColumnWidth="*"
+                  AlternatingRowBackground="LightGray" AlternationCount="2"
+                  CanUserResizeRows="False" CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True" CanUserReorderColumns="False">
+
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="5 5 5 5" />
+                </Style>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </DataGrid.Resources>
+
+        </DataGrid>
 
     </Grid>
 </Window>
