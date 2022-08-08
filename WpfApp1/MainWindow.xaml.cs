@@ -76,7 +76,7 @@ namespace FormApp
             try
             {
                 age = Int32.Parse(textBoxAge.Text);
-            } catch (FormatException ex)
+            } catch (FormatException)
             {
                 MessageBox.Show("Prosím zadávejte validní hodnoty! [-Věk musí být číslo]", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 connectToDatabase.Close(); //nechci aby se mi do databáze cokoliv vložilo pokud je špatný input
@@ -113,7 +113,7 @@ namespace FormApp
             {
                 age = Int32.Parse(textBoxAge.Text);
             }
-            catch (FormatException ex)
+            catch (FormatException)
             {
                 MessageBox.Show("Prosím zadávejte validní hodnoty! [-Věk musí být číslo]", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 connectToDatabase.Close(); //nechci aby se mi do databáze cokoliv vložilo pokud je špatný input
