@@ -13,11 +13,12 @@ namespace FormApp
         private DataTable dataTable = new DataTable("Praxe_test"); //vytváření prostoru pro data
         private string connectionString = Connect.ConnString; //do proměnné je uložen string s parametry pro připojení do SQL databáze z třídy Connect.cs
         Logs log = new Logs();
+        Superhero superhero = new Superhero();
         private int age;
 
         public MainWindow()
         {
-            log.log(0);
+            log.log(0); //výpis logu když se zapne aplikace
             InitializeComponent();
             this.WindowState = WindowState.Maximized; //fullscreen
             //naplnění combo-boxu Stringy
@@ -38,6 +39,7 @@ namespace FormApp
                 connectToDatabase.Close(); //zavře databázi
             }
             //----------------------------------------------------------------/ZKOUŠKA PŘIPOJENÍ-------------------------------------------------------------//
+            superhero.fillListWithSuperheores();
             connectToDatabase.Close();
             refresh(); //chci prvně naplnit formulář daty, ale později jsem si na to udělal metodu, takže si ji tady rovnou volám
         }
@@ -78,33 +80,38 @@ namespace FormApp
                 age = Int32.Parse(textBoxAge.Text);
             } catch (FormatException)
             {
-                MessageBox.Show("Prosím zadávejte validní hodnoty! [-Věk musí být číslo]", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Pole *Age* musí být číslo!", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 connectToDatabase.Close(); //nechci aby se mi do databáze cokoliv vložilo pokud je špatný input
+                log.log(Log.INSERT_AGE_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 return; //aby se neprovedl zbytek kódu v metodě
             }
-
-            if (!textBoxName.Text.Equals("") && !textBoxSurname.Text.Equals("")) //pokud Name a Surname není prázdný String
+            //kontrolní ify, které logují, pokud je špatně vyplněno specifické pole
+            if (textBoxName.Text.Equals(""))
+            {
+                MessageBox.Show("Vyplňte prosím pole *Name*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                log.log(Log.INSERT_NAME_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
+            }
+            else if (textBoxSurname.Text.Equals(""))
+            {
+                MessageBox.Show("Vyplňte prosím pole *Surname*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                log.log(Log.INSERT_SURNAME_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
+            } else
             {
                 SqlCommand insertQuery = new SqlCommand("INSERT INTO dbo.Praxe_test VALUES('" + textBoxName.Text + "','" + textBoxSurname.Text + "'," +
-                   age + ")", connectToDatabase);
+                    age + ")", connectToDatabase);
                 int sucessful = insertQuery.ExecuteNonQuery();
 
                 if (sucessful < 0 || sucessful == 0) //ověřovací if
                 {
                     MessageBox.Show("Záznam se nepodařilo vložit", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    log.log(3, textBoxName.Text, textBoxSurname.Text, age);
+                    log.log(Log.INSERT_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 }
                 else
                 {
                     MessageBox.Show("Záznam se úspěšně vložil", "Task successful", MessageBoxButton.OK, MessageBoxImage.Information);
-                    log.log(2, textBoxName.Text, textBoxSurname.Text, age);
+                    log.log(Log.INSERT_SUCCESS, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 }
             }
-            else
-            {
-                MessageBox.Show("Vyplňte prosím všechna data!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-
             connectToDatabase.Close();
         }
 
@@ -117,33 +124,39 @@ namespace FormApp
             }
             catch (FormatException)
             {
-                MessageBox.Show("Prosím zadávejte validní hodnoty! [-Věk musí být číslo]", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Pole *Age* musí být číslo!", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 connectToDatabase.Close(); //nechci aby se mi do databáze cokoliv vložilo pokud je špatný input
+                log.log(Log.DELETE_AGE_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 return; //aby se neprovedl zbytek kódu v metodě
             }
 
-            if (!textBoxName.Text.Equals("") && !textBoxSurname.Text.Equals("")) //pokud Name a Surname není prázdný String
+            if (textBoxName.Text.Equals(""))
+            {
+                MessageBox.Show("Vyplňte prosím pole *Name*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                log.log(Log.DELETE_NAME_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
+            }
+            else if (textBoxSurname.Text.Equals(""))
+            {
+                MessageBox.Show("Vyplňte prosím pole *Surname*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                log.log(Log.DELETE_SURNAME_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
+            }
+            else
             {
                 SqlCommand deleteQuery = new SqlCommand("DELETE FROM dbo.Praxe_test WHERE Name LIKE '" + textBoxName.Text + "' AND Surname LIKE '" + textBoxSurname.Text
-                  + "' AND Age = " + age, connectToDatabase);
+                    + "' AND Age = " + age, connectToDatabase);
                 int sucessful = deleteQuery.ExecuteNonQuery();
 
                 if (sucessful < 0 || sucessful == 0) //ověřovací if
                 {
                     MessageBox.Show("Záznam se nepodařilo smazat", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    log.log(5, textBoxName.Text, textBoxSurname.Text, age);
+                    log.log(Log.DELETE_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 }
                 else
                 {
                     MessageBox.Show("Záznam se úspěšně smazal", "Task successful", MessageBoxButton.OK, MessageBoxImage.Information);
-                    log.log(4, textBoxName.Text, textBoxSurname.Text, age);
+                    log.log(Log.DELETE_SUCCESS, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 }
             }
-            else
-            {
-                MessageBox.Show("Vyplňte prosím všechna data!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-
             connectToDatabase.Close();
         }
         //--------------------------------------------------------------/METODY PRO PRÁCI S DATY-------------------------------------------------------------//
@@ -212,11 +225,10 @@ namespace FormApp
             textBoxAge.Text = "";
         }
 
-        private void logClosed(object sender, EventArgs e)
+        private void logClosed(object sender, EventArgs e) //výpis logu když se vypne aplikace
         {
-            log.log(1);
+            log.log(Log.END);
         }
         //------------------------------------------------------------------/POMOCNÉ METODY------------------------------------------------------------------//
     }
-
 }

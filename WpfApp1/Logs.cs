@@ -25,46 +25,76 @@ namespace FormApp
             msg = "Default Log message";
         }
 
-        public void log(int typLogu, [Optional] String Name, [Optional] String Surname, [Optional] int Age) 
+        public void log(Log logType, [Optional] String Name, [Optional] String Surname, [Optional] String Age) 
         {
             openDatabase.ConnectionString = connectionString;
             connectToDatabase.ConnectionString = connectionString;
             connectToDatabase.Open();
             checkLogAge();
-            switch (typLogu) 
+            switch (logType) 
             {
-                case 0:
+                case Log.START:
                     msg = "*-------PROGRAM ZAPNUT-------*";
                     SqlCommand startLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     startLog.ExecuteNonQuery();
                     break;
-                case 1:
+                case Log.END:
                     msg = "*-------PROGRAM VYPNUT-------*";
                     SqlCommand endLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     endLog.ExecuteNonQuery();
                     break;
-                case 2:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age.ToString() + "] byl úspěšně vložen";
-                    SqlCommand insertLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
-                    insertLog.ExecuteNonQuery();
+                case Log.INSERT_SUCCESS:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] byl úspěšně vložen";
+                    SqlCommand insertSuccessLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    insertSuccessLog.ExecuteNonQuery();
                     break;
-                case 3:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age.ToString() + "] se nepovedlo vložit";
+                case Log.INSERT_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepodařilo vložit";
                     SqlCommand insertErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     insertErrLog.ExecuteNonQuery();
                     break;
-                case 4:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age.ToString() + "] se úspěšně smazal";
-                    SqlCommand deleteLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
-                    deleteLog.ExecuteNonQuery();
+                case Log.INSERT_NAME_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo vložit, pole *Name* nevyplněno";
+                    SqlCommand insertNameFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    insertNameFormatErrLog.ExecuteNonQuery();
                     break;
-                case 5:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age.ToString() + "] se nepovedlo smazat";
+                case Log.INSERT_SURNAME_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo vložit, pole *Surname* nevyplněno";
+                    SqlCommand insertSurnameFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    insertSurnameFormatErrLog.ExecuteNonQuery();
+                    break;
+                case Log.INSERT_AGE_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo vložit, špatný formát proměnné *Age*";
+                    SqlCommand insertAgeFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    insertAgeFormatErrLog.ExecuteNonQuery();
+                    break;
+                case Log.DELETE_SUCCESS:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se úspěšně smazal";
+                    SqlCommand deleteSuccessLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    deleteSuccessLog.ExecuteNonQuery();
+                    break;
+                case Log.DELETE_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepodařilo smazat";
                     SqlCommand deleteErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     deleteErrLog.ExecuteNonQuery();
                     break;
+                case Log.DELETE_AGE_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo smazat, špatný formát proměnné *Age*";
+                    SqlCommand deleteAgeFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    deleteAgeFormatErrLog.ExecuteNonQuery();
+                    break;
+                case Log.DELETE_NAME_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo smazat, pole *Name* nevyplněno";
+                    SqlCommand deleteNameFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    deleteNameFormatErrLog.ExecuteNonQuery();
+                    break;
+                case Log.DELETE_SURNAME_FAILURE:
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo smazat, pole *Surname* nevyplněno";
+                    SqlCommand deleteSurnameFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
+                    deleteSurnameFormatErrLog.ExecuteNonQuery();
+                    break;
                 default:
-                    MessageBox.Show("Unsupported Log type - " + typLogu + ", (VALID LOGS - 0,1,2,3,4,5)", "Invalid Log type", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Unsupported Log type (?? *_* ??) ", "Invalid Log type", MessageBoxButton.OK, MessageBoxImage.Error);
                     break;
             }
             connectToDatabase.Close();
