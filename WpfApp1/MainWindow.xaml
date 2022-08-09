@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FormApp"
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" x:Class="FormApp.MainWindow" mc:Ignorable="d"
         Title="Formulář" Height="450" Width="800" 
-        Icon="C:\\Users\\UCZGEN-IT\\source\\repos\\WpfApp1\\WpfApp1\\ikona.jpg">
+        Icon="C:\\Users\\UCZGEN-IT\\source\\repos\\WpfApp1\\WpfApp1\\ikona.jpg" Closed="logClosed">
 
     <Grid x:Name="myGrid" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
           Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=ActualHeight}" VerticalAlignment="Top">

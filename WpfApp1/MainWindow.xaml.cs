@@ -1,6 +1,4 @@
-﻿using DevExpress.XtraRichEdit.Model;
-using System;
-using System.Collections;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
@@ -14,10 +12,12 @@ namespace FormApp
         private SqlConnection connectToDatabase = new SqlConnection(); //instance pro připojování do databáze
         private DataTable dataTable = new DataTable("Praxe_test"); //vytváření prostoru pro data
         private string connectionString = Connect.ConnString; //do proměnné je uložen string s parametry pro připojení do SQL databáze z třídy Connect.cs
+        Logs log = new Logs();
         private int age;
 
         public MainWindow()
         {
+            log.log(0);
             InitializeComponent();
             this.WindowState = WindowState.Maximized; //fullscreen
             //naplnění combo-boxu Stringy
@@ -92,10 +92,12 @@ namespace FormApp
                 if (sucessful < 0 || sucessful == 0) //ověřovací if
                 {
                     MessageBox.Show("Záznam se nepodařilo vložit", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    log.log(3, textBoxName.Text, textBoxSurname.Text, age);
                 }
                 else
                 {
                     MessageBox.Show("Záznam se úspěšně vložil", "Task successful", MessageBoxButton.OK, MessageBoxImage.Information);
+                    log.log(2, textBoxName.Text, textBoxSurname.Text, age);
                 }
             }
             else
@@ -129,10 +131,12 @@ namespace FormApp
                 if (sucessful < 0 || sucessful == 0) //ověřovací if
                 {
                     MessageBox.Show("Záznam se nepodařilo smazat", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    log.log(5, textBoxName.Text, textBoxSurname.Text, age);
                 }
                 else
                 {
                     MessageBox.Show("Záznam se úspěšně smazal", "Task successful", MessageBoxButton.OK, MessageBoxImage.Information);
+                    log.log(4, textBoxName.Text, textBoxSurname.Text, age);
                 }
             }
             else
@@ -206,6 +210,11 @@ namespace FormApp
             textBoxName.Text = "";
             textBoxSurname.Text = "";
             textBoxAge.Text = "";
+        }
+
+        private void logClosed(object sender, EventArgs e)
+        {
+            log.log(1);
         }
         //------------------------------------------------------------------/POMOCNÉ METODY------------------------------------------------------------------//
     }
