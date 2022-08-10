@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FormApp.Classes;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
@@ -12,9 +13,9 @@ namespace FormApp
         private SqlConnection connectToDatabase = new SqlConnection(); //instance pro připojování do databáze
         private DataTable dataTable = new DataTable("Praxe_test"); //vytváření prostoru pro data
         private string connectionString = Connect.ConnString; //do proměnné je uložen string s parametry pro připojení do SQL databáze z třídy Connect.cs
-        Logs log = new Logs();
-        Superhero superhero = new Superhero();
-        private int age;
+        Logs log = new Logs(); //instance třídy Logs, abych si mohl zavolat metodu na kontrolu logů v databázi
+        Superhero superhero = new Superhero(); //instance třídy Superhero, abych mohl zavolat metodu na naplnění listu superhero
+        private int age; //pomocná proměnná, se kterou ověřuji validní uživatelský vstup na poli *age*
 
         public MainWindow()
         {
@@ -40,6 +41,7 @@ namespace FormApp
             }
             //----------------------------------------------------------------/ZKOUŠKA PŘIPOJENÍ-------------------------------------------------------------//
             superhero.fillListWithSuperheores();
+            log.checkLogAge();
             connectToDatabase.Close();
             refresh(); //chci prvně naplnit formulář daty, ale později jsem si na to udělal metodu, takže si ji tady rovnou volám
         }
@@ -75,17 +77,19 @@ namespace FormApp
         private void insertData() //metoda která vkládá data do databáze
         {
             connectToDatabase.Open();
-            try
+            try //ověření, zda uživatel zadává do pole *age* číslo
             {
                 age = Int32.Parse(textBoxAge.Text);
-            } catch (FormatException)
+            } 
+            catch (FormatException)
             {
                 MessageBox.Show("Pole *Age* musí být číslo!", "Input format Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 connectToDatabase.Close(); //nechci aby se mi do databáze cokoliv vložilo pokud je špatný input
                 log.log(Log.INSERT_AGE_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
                 return; //aby se neprovedl zbytek kódu v metodě
             }
-            //kontrolní ify, které logují, pokud je špatně vyplněno specifické pole
+
+            //kontrolní ify, které upozorňují uživatele a logují, pokud je jedno z polí prázdné
             if (textBoxName.Text.Equals(""))
             {
                 MessageBox.Show("Vyplňte prosím pole *Name*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -95,13 +99,14 @@ namespace FormApp
             {
                 MessageBox.Show("Vyplňte prosím pole *Surname*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 log.log(Log.INSERT_SURNAME_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
-            } else
+            } 
+            else
             {
-                SqlCommand insertQuery = new SqlCommand("INSERT INTO dbo.Praxe_test VALUES('" + textBoxName.Text + "','" + textBoxSurname.Text + "'," +
-                    age + ")", connectToDatabase);
+                SqlCommand insertQuery = new SqlCommand("INSERT INTO dbo.Praxe_test VALUES('" + textBoxName.Text + 
+                    "','" + textBoxSurname.Text + "'," + age + ")", connectToDatabase);
                 int sucessful = insertQuery.ExecuteNonQuery();
 
-                if (sucessful < 0 || sucessful == 0) //ověřovací if
+                if (sucessful <= 0) //ověření, zda se dotaz provedl
                 {
                     MessageBox.Show("Záznam se nepodařilo vložit", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
                     log.log(Log.INSERT_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
@@ -115,10 +120,10 @@ namespace FormApp
             connectToDatabase.Close();
         }
 
-        private void deleteData() //metoda která maže data z databáze
+        private void deleteData() //metoda, která maže data z databáze
         {
             connectToDatabase.Open();
-            try
+            try //ověření, zda uživatel zadává do pole *age* číslo
             {
                 age = Int32.Parse(textBoxAge.Text);
             }
@@ -130,6 +135,7 @@ namespace FormApp
                 return; //aby se neprovedl zbytek kódu v metodě
             }
 
+            //kontrolní ify, které upozorňují uživatele a logují, pokud je jedno z polí prázdné
             if (textBoxName.Text.Equals(""))
             {
                 MessageBox.Show("Vyplňte prosím pole *Name*!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -142,11 +148,11 @@ namespace FormApp
             }
             else
             {
-                SqlCommand deleteQuery = new SqlCommand("DELETE FROM dbo.Praxe_test WHERE Name LIKE '" + textBoxName.Text + "' AND Surname LIKE '" + textBoxSurname.Text
-                    + "' AND Age = " + age, connectToDatabase);
+                SqlCommand deleteQuery = new SqlCommand("DELETE FROM dbo.Praxe_test WHERE Name LIKE '" + textBoxName.Text + 
+                    "' AND Surname LIKE '" + textBoxSurname.Text + "' AND Age = " + age, connectToDatabase);
                 int sucessful = deleteQuery.ExecuteNonQuery();
 
-                if (sucessful < 0 || sucessful == 0) //ověřovací if
+                if (sucessful <= 0) //ověření, zda se dotaz provedl
                 {
                     MessageBox.Show("Záznam se nepodařilo smazat", "Task failed", MessageBoxButton.OK, MessageBoxImage.Error);
                     log.log(Log.DELETE_FAILURE, textBoxName.Text, textBoxSurname.Text, textBoxAge.Text);
@@ -170,7 +176,6 @@ namespace FormApp
             dataAdapter.Fill(dataTable); //data adapter zpracovanými daty naplní data table "Praxe_test"
             dataGrid.DataContext = dataTable; //data table se promítne do formuláře
             connectToDatabase.Close();
-
         }
 
         private void refresh() //metoda která refreshne tabulku a zobrazí všechna data

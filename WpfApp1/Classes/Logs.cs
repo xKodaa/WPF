@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace FormApp
+namespace FormApp.Classes
 {
     internal class Logs
     {
@@ -16,22 +16,20 @@ namespace FormApp
         private SqlConnection openDatabase = new SqlConnection();
         private string connectionString = Connect.ConnString;
 
-        private String msg;
-        private int typLogu;
-        string format = "yyyy-MM-dd HH:mm:ss";
+        private string msg; //proměnná, kterou předávám v každým case ve switchi do dotazu, kterej zapisuje do databáze (loguje)
+        private string format = "yyyy-MM-dd HH:mm:ss"; //formát pro datetime, kterej podporuje SQL databáze
 
         public Logs()
         {
             msg = "Default Log message";
         }
 
-        public void log(Log logType, [Optional] String Name, [Optional] String Surname, [Optional] String Age) 
+        public void log(Log logType, [Optional] string Name, [Optional] string Surname, [Optional] string Age)
         {
             openDatabase.ConnectionString = connectionString;
             connectToDatabase.ConnectionString = connectionString;
             connectToDatabase.Open();
-            checkLogAge();
-            switch (logType) 
+            switch (logType) //switch kterej bere jako parametr mnou vytvořený Enum Log a na každý z nich reaguje jiným zápisem do databáze
             {
                 case Log.START:
                     msg = "*-------PROGRAM ZAPNUT-------*";
@@ -64,7 +62,7 @@ namespace FormApp
                     insertSurnameFormatErrLog.ExecuteNonQuery();
                     break;
                 case Log.INSERT_AGE_FAILURE:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo vložit, špatný formát proměnné *Age*";
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo vložit, špatný formát pole *Age*";
                     SqlCommand insertAgeFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     insertAgeFormatErrLog.ExecuteNonQuery();
                     break;
@@ -79,7 +77,7 @@ namespace FormApp
                     deleteErrLog.ExecuteNonQuery();
                     break;
                 case Log.DELETE_AGE_FAILURE:
-                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo smazat, špatný formát proměnné *Age*";
+                    msg = "Záznam [" + Name + ", " + Surname + ", " + Age + "] se nepovedlo smazat, špatný formát pole *Age*";
                     SqlCommand deleteAgeFormatErrLog = new SqlCommand("INSERT INTO dbo.Praxe_test_logs VALUES ('" + DateTime.Now.ToString(format) + "', '" + msg + "')", connectToDatabase);
                     deleteAgeFormatErrLog.ExecuteNonQuery();
                     break;
@@ -100,18 +98,18 @@ namespace FormApp
             connectToDatabase.Close();
         }
 
-        public void checkLogAge() 
+        public void checkLogAge() //metoda, která kontroluje databázi při každém spuštění programu a hledá staré logy
         {
             openDatabase.Open();
-            SqlCommand check = new SqlCommand("SELECT TOP(100) Date, Text FROM dbo.Praxe_test_logs ORDER BY Date", connectToDatabase);
+            SqlCommand check = new SqlCommand("SELECT TOP(1000) Date, Text FROM dbo.Praxe_test_logs ORDER BY Date", openDatabase);
             SqlDataReader reader = check.ExecuteReader();
             while (reader.Read()) //přečte každej řádek ze selectu check
             {
                 if (DateTime.Now.Year - DateTime.Parse(reader[0].ToString()).Year >= 3) //kontroluji zda se v databázi nachází záznam starší než 3 roky
                 {
-                    DateTime dt = DateTime.Parse(reader[0].ToString());
+                    DateTime dt = DateTime.Parse(reader[0].ToString()); //pokud se zde nachází záznam starší než 3 roky, převedu si ho na správný formát datetime
                     SqlCommand deleteOld = new SqlCommand("DELETE FROM dbo.Praxe_test_logs WHERE Date = '" + dt.ToString(format) + "'", openDatabase);
-                    deleteOld.ExecuteNonQuery(); //pokud ano smažu ho
+                    deleteOld.ExecuteNonQuery(); //a smažu ho
                 }
             }
             reader.Close();
